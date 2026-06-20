@@ -1,0 +1,6 @@
+Model,Accuracy_Sample,Accuracy_ClusterAvg,Precision_Sample,Precision_ClusterAvg,Recall_Sample,Recall_ClusterAvg,F1_Score_Sample,F1_Score_ClusterAvg
+KNN,74.12,74.68,31.57,28.72,55.39,45.44,40.22,34.77
+LR,88.33,89.26,61.14,59.14,70.66,63.64,65.56,60.9
+DT,92.24,90.88,71.18,65.42,85.03,77.18,77.49,70.42
+RF,94.73,94.16,81.9,81.51,85.33,73.25,83.58,76.75
+SVM,88.05,87.41,60.7,54.53,67.96,60.86,64.12,56.99
