@@ -1,13 +1,28 @@
+# --- Core data science ---
 pandas
 numpy
 matplotlib
 seaborn
+
+# --- Machine learning ---
 scikit-learn
-xgboost
-catboost
 imbalanced-learn
-shap
-plotly
-streamlit
+yellowbrick
 joblib
-mlflow
+
+# --- Notebook tooling ---
+jupyter
+ipykernel
+tabulate
+
+# --- API ---
+fastapi
+uvicorn[standard]
+pydantic
+
+# --- Demo app ---
+streamlit
+
+# --- Dev / testing ---
+requests
+pytest
