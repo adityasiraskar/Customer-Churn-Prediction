@@ -61,9 +61,9 @@ Raw data (Kaggle)
 05_results_comparison.ipynb → final charts, leaderboard, written conclusion
       │
       ▼
- ┌──────────────┐      ┌─────────────────┐
+ ┌──────────────┐          ┌─────────────────┐
  │ FastAPI (app/main.py) │  Streamlit (app/streamlit_app.py) │
- └──────────────┘      └─────────────────┘
+ └──────────────┘          └─────────────────┘
       both served by the same trained model + preprocessor
 ```
 
