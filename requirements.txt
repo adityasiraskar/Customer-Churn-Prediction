@@ -15,14 +15,8 @@ jupyter
 ipykernel
 tabulate
 
-# --- API ---
-fastapi
-uvicorn[standard]
-pydantic
-
 # --- Demo app ---
 streamlit
 
 # --- Dev / testing ---
-requests
 pytest

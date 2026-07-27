@@ -2,7 +2,7 @@
 scripts/build_artifacts.py
 
 Run this ONCE (after you have data/raw/BankChurners.csv) to fit and save the
-preprocessing artifacts the FastAPI app needs at inference time.
+preprocessing artifacts the Streamlit app needs at inference time.
 
 Usage:
     python scripts/build_artifacts.py

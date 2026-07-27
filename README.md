@@ -3,7 +3,7 @@
 An end-to-end machine learning project that predicts customer churn for a bank's
 credit card customers — covering EDA, preprocessing, **K-Means customer segmentation**,
 **SMOTE** class balancing, training/comparing **5 classification models**, and deploying
-the best model behind both a **FastAPI REST API** and an **interactive Streamlit demo**.
+the best model behind an **interactive Streamlit demo**.
 
 Inspired by the methodology in:
 > Tran, H., Le, N., & Nguyen, V.-H. (2023). *Customer churn prediction in the banking
@@ -61,10 +61,10 @@ Raw data (Kaggle)
 05_results_comparison.ipynb → final charts, leaderboard, written conclusion
       │
       ▼
- ┌──────────────┐          ┌─────────────────┐
- │ FastAPI (app/main.py) │  Streamlit (app/streamlit_app.py) │
- └──────────────┘          └─────────────────┘
-      both served by the same trained model + preprocessor
+ ┌────────────────────┐
+ │ Streamlit (app/streamlit_app.py) │
+ └────────────────────┘
+      served by the same trained model + preprocessor
 ```
 
 ---
@@ -123,11 +123,8 @@ customer-churn-prediction/
 ├── src/
 │   └── preprocessing.py       # Shared preprocessing logic (training + serving)
 ├── scripts/
-│   ├── build_artifacts.py     # Fit & save the preprocessor for the API/demo
-│   └── test_api.py            # Quick script to test the running FastAPI service
+│   └── build_artifacts.py     # Fit & save the preprocessor for the demo
 ├── app/
-│   ├── main.py                # FastAPI app
-│   ├── schemas.py             # Pydantic request/response models
 │   └── streamlit_app.py       # Interactive Streamlit demo
 ├── outputs/
 │   ├── figures/                # Saved chart PNGs
@@ -184,23 +181,7 @@ python scripts/build_artifacts.py
 This fits and saves `models/saved_models/preprocessor.pkl`, used by both the API and
 Streamlit app to transform raw inputs exactly the way training data was transformed.
 
-### 5. Run the FastAPI service
-
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-
-- Interactive docs: http://127.0.0.1:8000/docs
-- Test it: `python scripts/test_api.py`
-
-**Endpoints:**
-| Method | Path | Description |
-|---|---|---|
-| GET | `/health` | Service + model status |
-| POST | `/predict` | Single customer churn prediction |
-| POST | `/predict/batch` | Multiple customers at once |
-
-### 6. Run the Streamlit demo
+### 5. Run the Streamlit demo
 
 ```bash
 streamlit run app/streamlit_app.py
@@ -213,7 +194,6 @@ Includes a single-customer prediction form, batch CSV upload, and a project summ
 ## 🛠️ Tech Stack
 
 - **Data/ML:** Python, pandas, NumPy, scikit-learn, imbalanced-learn (SMOTE), yellowbrick
-- **API:** FastAPI, Pydantic, Uvicorn
 - **Demo:** Streamlit
 - **Visualization:** Matplotlib, Seaborn
 
@@ -224,7 +204,7 @@ Includes a single-customer prediction form, batch CSV upload, and a project summ
 - Connect to a live database instead of a static Kaggle CSV
 - Feature importance / SHAP-based explainability for individual predictions
 - Hyperparameter tuning (GridSearchCV / Optuna) for further accuracy gains
-- Dockerize the FastAPI service for easier deployment
+- Containerize the Streamlit app for easier deployment
 - CI/CD pipeline (GitHub Actions) for automated testing of `src/preprocessing.py`
 
 ---

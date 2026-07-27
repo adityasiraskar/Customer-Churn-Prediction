@@ -5,10 +5,10 @@ Single source of truth for cleaning / transforming the raw BankChurners data.
 Used by:
   - notebooks/02_preprocessing.ipynb (training time, on the full raw CSV)
   - scripts/build_artifacts.py (fits & saves the scalers/encoders)
-  - app/main.py (inference time, on a single incoming request)
+  - app/streamlit_app.py (inference time, on raw customer input)
 
-Keeping this logic in one place guarantees the FastAPI service preprocesses
-new customers EXACTLY the same way the model was trained.
+Keeping this logic in one place guarantees the Streamlit app preprocesses
+new customers exactly the same way the model was trained.
 """
 
 from __future__ import annotations

@@ -2,8 +2,8 @@
 app/streamlit_app.py
 
 Interactive Streamlit demo for the Customer Churn Prediction project.
-Uses the SAME preprocessor (src/preprocessing.py) and trained model as the
-FastAPI service — so predictions here exactly match the API's predictions.
+Uses the same preprocessor (src/preprocessing.py) and trained model to
+produce churn predictions from raw customer inputs.
 
 Run locally:
     streamlit run app/streamlit_app.py
@@ -297,14 +297,14 @@ banking sector, inspired by:
 3. **Customer Segmentation** — K-Means clustering (k=6, chosen via the elbow method)
 4. **Modeling** — SMOTE balancing + 5 classifiers (KNN, Logistic Regression, Decision
    Tree, Random Forest, SVM), evaluated with and without segmentation
-5. **Deployment** — this Streamlit app + a separate FastAPI REST service, both sharing
-   the exact same preprocessing logic as training (`src/preprocessing.py`)
+5. **Deployment** — this Streamlit app, using the exact same preprocessing logic as
+   training (`src/preprocessing.py`)
 
 **Key finding (matching the original paper):** customer segmentation does **not**
 consistently improve churn prediction accuracy — model choice matters more than
 segmentation. **Random Forest** was the best-performing model overall.
 
-**Tech stack:** Python, pandas, scikit-learn, imbalanced-learn, FastAPI, Streamlit.
+**Tech stack:** Python, pandas, scikit-learn, imbalanced-learn, and Streamlit.
         """
     )
     st.caption(f"Currently serving model: **{model_name}**")
