@@ -2,15 +2,29 @@
 data/raw/*.csv
 data/processed/*.csv
 
-# Models / artifacts (regenerable)
+# Models and generated artifacts
 models/saved_models/*.pkl
+mlruns/
+**/mlruns/
+mlflow.db
+**/mlflow.db
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
 .ipynb_checkpoints/
-venv/
-.env
 
-# OS
+# Virtual environments
+venv/
+.venv/
+.venv-*/
+
+# Environment files
+.env
+.env.*
+
+# OS/editor clutter
 .DS_Store
+Thumbs.db

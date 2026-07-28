@@ -42,7 +42,7 @@ def load_model_and_preprocessor():
     if not model_matches:
         return None, None, None
 
-    model_path = model_matches[0]
+    model_path = max(model_matches, key=os.path.getmtime)
     model = joblib.load(model_path)
     model_name = os.path.basename(model_path).replace("best_model_", "").replace(".pkl", "")
 
@@ -54,6 +54,35 @@ def load_model_and_preprocessor():
 
 
 model, model_name, preprocessor = load_model_and_preprocessor()
+
+
+def artifact_mismatch_message() -> str | None:
+    if model is None or preprocessor is None:
+        return None
+
+    expected = getattr(model, "n_features_in_", None)
+    actual = len(getattr(preprocessor, "final_feature_columns", []))
+    if expected is not None and actual != expected:
+        return (
+            "Model/preprocessor feature mismatch: the model expects "
+            f"{expected} features, but the preprocessor produces {actual}. "
+            "Run `python scripts/build_artifacts.py` after training the model."
+        )
+
+    return None
+
+
+def predict_churn_probabilities(features_df: pd.DataFrame) -> np.ndarray:
+    model_input = (
+        features_df
+        if getattr(model, "feature_names_in_", None) is not None
+        else features_df.to_numpy()
+    )
+    probabilities = model.predict_proba(model_input)
+
+    classes = list(getattr(model, "classes_", []))
+    churn_index = classes.index(1) if 1 in classes else 1
+    return probabilities[:, churn_index]
 
 
 def risk_level(probability: float) -> str:
@@ -71,7 +100,7 @@ def risk_color(level: str) -> str:
 def predict_one(customer: dict) -> dict:
     raw_df = pd.DataFrame([customer])
     features_df = preprocessor.transform(raw_df)
-    proba = float(model.predict_proba(features_df)[0][1])
+    proba = float(predict_churn_probabilities(features_df)[0])
     return {
         "prediction": "Churn" if proba >= 0.5 else "Stay",
         "probability": proba,
@@ -99,6 +128,11 @@ if preprocessor is None:
     st.error(
         "⚠️ No preprocessor found. Run `python scripts/build_artifacts.py` first."
     )
+    st.stop()
+
+mismatch_message = artifact_mismatch_message()
+if mismatch_message:
+    st.error(mismatch_message)
     st.stop()
 
 st.success(f"✅ Model loaded: **{model_name}**")
@@ -241,7 +275,7 @@ with tab2:
         if st.button("🔮 Run Batch Prediction", type="primary"):
             try:
                 features_df = preprocessor.transform(batch_df)
-                probas = model.predict_proba(features_df)[:, 1]
+                probas = predict_churn_probabilities(features_df)
 
                 results_df = batch_df.copy()
                 results_df["Churn_Probability"] = np.round(probas, 4)

@@ -1,216 +1,288 @@
-# 🏦 Customer Churn Prediction in the Banking Sector
+# Customer Churn Prediction in the Banking Sector
 
-An end-to-end machine learning project that predicts customer churn for a bank's
-credit card customers — covering EDA, preprocessing, **K-Means customer segmentation**,
-**SMOTE** class balancing, training/comparing **5 classification models**, and deploying
-the best model behind an **interactive Streamlit demo**.
+An end-to-end machine learning project for predicting credit card customer churn in
+the banking sector. The project includes exploratory analysis, preprocessing,
+customer segmentation, model training, model comparison, and an interactive
+Streamlit prediction app.
 
-Inspired by the methodology in:
-> Tran, H., Le, N., & Nguyen, V.-H. (2023). *Customer churn prediction in the banking
-> sector using machine learning-based classification models.* Interdisciplinary Journal
-> of Information, Knowledge, and Management, 18, 87–105.
-> https://doi.org/10.28945/5086
+The workflow is inspired by:
 
----
+Tran, H., Le, N., & Nguyen, V.-H. (2023). Customer churn prediction in the
+banking sector using machine learning-based classification models.
+Interdisciplinary Journal of Information, Knowledge, and Management, 18, 87-105.
+https://doi.org/10.28945/5086
 
-## 📌 Problem Statement
+## Project Goals
 
-Customer churn — when a customer stops doing business with the bank — directly hurts
-revenue. The bank wants to know, **in advance**, which credit card customers are likely
-to churn so it can intervene (offers, outreach, fee waivers) before they leave.
+This project answers two practical questions:
 
-This project answers two questions:
-1. **Which ML model best predicts churn** for this dataset?
-2. **Does segmenting customers first (via clustering) improve prediction accuracy**,
-   or is it not worth the extra complexity?
+1. Which machine learning model predicts bank customer churn best?
+2. Does customer segmentation with K-Means improve churn prediction performance?
 
----
+The current saved app artifacts serve a Random Forest model.
 
-## 📊 Dataset
+## Dataset
 
-[Credit Card customers — Kaggle](https://www.kaggle.com/datasets/anwarsan/credit-card-bank-churn)
+Dataset: Credit Card Customers - Kaggle
+https://www.kaggle.com/datasets/anwarsan/credit-card-bank-churn
 
-- 10,127 customers, 21 features after cleaning (demographics, account info, transaction
-  behavior)
-- Target: `Attrition_Flag` → **Existing Customer** (stayed) vs **Attrited Customer** (churned)
-- Imbalanced: ~84% stayed, ~16% churned
+Expected raw file:
 
-> Download `BankChurners.csv` from Kaggle and place it in `data/raw/` before running
-> any notebooks.
-
----
-
-## 🧱 Pipeline
-
-```
-Raw data (Kaggle)
-      │
-      ▼
-01_eda.ipynb              → distributions, target imbalance, correlations
-      │
-      ▼
-02_preprocessing.ipynb     → clean Unknowns, encode categoricals, scale numerics
-      │
-      ▼
-03_clustering.ipynb        → K-Means (k=6, via elbow method) → customer segments
-      │
-      ▼
-04_modeling.ipynb          → SMOTE + train/evaluate 5 models, with vs without segmentation
-      │
-      ▼
-05_results_comparison.ipynb → final charts, leaderboard, written conclusion
-      │
-      ▼
- ┌────────────────────┐
- │ Streamlit (app/streamlit_app.py) │
- └────────────────────┘
-      served by the same trained model + preprocessor
+```text
+data/raw/BankChurners.csv
 ```
 
----
+The raw dataset contains 10,127 customers. The target column is
+`Attrition_Flag`, where `Attrited Customer` represents churn and
+`Existing Customer` represents non-churn.
 
-## 🤖 Models Compared
+The raw CSV is intentionally ignored by Git because it is a local dataset file.
 
-| Model | Description |
+## Project Structure
+
+```text
+Customer-Churn-Prediction/
+|-- app/
+|   `-- streamlit_app.py
+|-- data/
+|   |-- raw/
+|   `-- processed/
+|-- models/
+|   `-- saved_models/
+|-- notebooks/
+|   |-- 01_eda.ipynb
+|   |-- 02_preprocessing.ipynb
+|   |-- 03_clustering.ipynb
+|   |-- 04_modeling.ipynb
+|   `-- 05_results_comparison.ipynb
+|-- outputs/
+|   `-- metrics/
+|-- scripts/
+|   `-- build_artifacts.py
+|-- src/
+|   `-- preprocessing.py
+|-- tests/
+|   `-- test_serving_artifacts.py
+|-- .gitignore
+|-- README.md
+`-- requirements.txt
+```
+
+## Quick Start on Windows PowerShell
+
+Run these commands from PowerShell.
+
+```powershell
+cd "D:\Churn Prediction\Customer-Churn-Prediction"
+```
+
+If you want to use the existing virtual environment in the parent folder:
+
+```powershell
+..\.venv-1\Scripts\Activate.ps1
+```
+
+If activation is blocked by PowerShell policy for this terminal session:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+..\.venv-1\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```powershell
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Build the serving preprocessor artifact:
+
+```powershell
+python scripts\build_artifacts.py
+```
+
+Run tests:
+
+```powershell
+pytest
+```
+
+Run the Streamlit app:
+
+```powershell
+streamlit run app\streamlit_app.py
+```
+
+Open the local URL shown by Streamlit, usually:
+
+```text
+http://localhost:8501
+```
+
+## Fresh Environment Setup
+
+If the existing parent virtual environment is missing or you want a new one
+inside the project, run:
+
+```powershell
+cd "D:\Churn Prediction\Customer-Churn-Prediction"
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Then continue with:
+
+```powershell
+python scripts\build_artifacts.py
+pytest
+streamlit run app\streamlit_app.py
+```
+
+## Full Rebuild Workflow
+
+Use this path if you want to regenerate processed data, model artifacts, and
+metrics from the raw Kaggle dataset.
+
+1. Place the raw dataset here:
+
+```text
+data/raw/BankChurners.csv
+```
+
+2. Start Jupyter:
+
+```powershell
+jupyter notebook
+```
+
+3. Run notebooks in this order:
+
+```text
+notebooks/01_eda.ipynb
+notebooks/02_preprocessing.ipynb
+notebooks/03_clustering.ipynb
+notebooks/04_modeling.ipynb
+notebooks/05_results_comparison.ipynb
+```
+
+4. Rebuild the serving preprocessor after training:
+
+```powershell
+python scripts\build_artifacts.py
+```
+
+5. Verify and run the app:
+
+```powershell
+pytest
+streamlit run app\streamlit_app.py
+```
+
+## What the App Uses
+
+The Streamlit app loads:
+
+```text
+models/saved_models/best_model_*.pkl
+models/saved_models/preprocessor.pkl
+models/saved_models/feature_columns.pkl
+```
+
+`scripts/build_artifacts.py` fits the shared preprocessor in
+`src/preprocessing.py` and aligns it with `feature_columns.pkl`, so the app
+serves the exact feature shape expected by the trained model.
+
+## Model Training Summary
+
+The project compares:
+
+| Model | Name |
 |---|---|
 | KNN | K-Nearest Neighbors |
 | LR | Logistic Regression |
 | DT | Decision Tree |
-| **RF** | **Random Forest** (best performer) |
+| RF | Random Forest |
 | SVM | Support Vector Machine |
 
-Each model is evaluated with a 70/30 hold-out split, with **SMOTE applied only to the
-training set** (no data leakage), and compared **with vs. without K-Means customer
-segmentation**.
+The workflow applies SMOTE only to the training split to avoid test data
+leakage. Results are compared with and without K-Means segmentation.
 
----
+## Useful Commands
 
-## 🏆 Results
+Compile Python files:
 
-> Exact numbers depend on your run — regenerate by running notebooks 01→05.
-> See `outputs/metrics/results_table.md` for the latest auto-generated table.
-
-| Model | Accuracy | Precision | Recall | F1-Score |
-|---|---|---|---|---|
-| RF  | ~97% | ~97% | ~98% | ~97% |
-| SVM | ~94% | ~96% | ~91% | ~94% |
-| DT  | ~94% | ~93% | ~95% | ~94% |
-| KNN | ~90% | ~83% | ~99% | ~90% |
-| LR  | ~86% | ~86% | ~87% | ~86% |
-
-**Key finding:** Customer segmentation does **not** consistently improve churn
-prediction accuracy — results depend on the dataset and model choice rather than
-segmentation itself. This matches the conclusion of the reference paper.
-
-![Sample vs Cluster Average](outputs/figures/sample_vs_cluster_avg.png)
-![Model Leaderboard](outputs/figures/model_leaderboard.png)
-
----
-
-## 📂 Project Structure
-
-```
-customer-churn-prediction/
-├── data/
-│   ├── raw/                  # BankChurners.csv (download from Kaggle, not committed)
-│   └── processed/             # Generated by notebooks 02 & 03
-├── notebooks/
-│   ├── 01_eda.ipynb
-│   ├── 02_preprocessing.ipynb
-│   ├── 03_clustering.ipynb
-│   ├── 04_modeling.ipynb
-│   └── 05_results_comparison.ipynb
-├── src/
-│   └── preprocessing.py       # Shared preprocessing logic (training + serving)
-├── scripts/
-│   └── build_artifacts.py     # Fit & save the preprocessor for the demo
-├── app/
-│   └── streamlit_app.py       # Interactive Streamlit demo
-├── outputs/
-│   ├── figures/                # Saved chart PNGs
-│   └── metrics/                # Saved result tables (CSV/Markdown)
-├── models/
-│   └── saved_models/           # Trained model + preprocessor (.pkl, gitignored)
-├── requirements.txt
-└── README.md
+```powershell
+python -m compileall src scripts app tests
 ```
 
----
+Run tests:
 
-## 🚀 Getting Started
-
-### 1. Clone & install
-
-```bash
-git clone https://github.com/<your-username>/customer-churn-prediction.git
-cd customer-churn-prediction
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+```powershell
+pytest
 ```
 
-### 2. Get the data
+Rebuild serving artifact:
 
-Download `BankChurners.csv` from
-[Kaggle](https://www.kaggle.com/datasets/anwarsan/credit-card-bank-churn) and place it at:
-
-```
-data/raw/BankChurners.csv
+```powershell
+python scripts\build_artifacts.py
 ```
 
-### 3. Run the notebooks (in order)
+Run app on a specific port:
 
-```bash
+```powershell
+streamlit run app\streamlit_app.py --server.port 8501
+```
+
+Remove local cache files:
+
+```powershell
+Remove-Item -Recurse -Force .pytest_cache, src\__pycache__, app\__pycache__, scripts\__pycache__, tests\__pycache__ -ErrorAction SilentlyContinue
+```
+
+Remove local MLflow files after closing Jupyter/Python processes:
+
+```powershell
+Remove-Item -Recurse -Force notebooks\mlruns, notebooks\mlflow.db -ErrorAction SilentlyContinue
+```
+
+## Git Ignore Notes
+
+The `.gitignore` file excludes local data, generated model pickle files,
+MLflow runs/databases, Python caches, notebook checkpoints, virtual
+environments, environment files, and OS clutter.
+
+Keep source code, notebooks, tests, and lightweight metrics in Git. Regenerate
+large runtime artifacts locally when needed.
+
+## Troubleshooting
+
+If the app says the preprocessor is missing:
+
+```powershell
+python scripts\build_artifacts.py
+```
+
+If the app says the model and preprocessor feature counts do not match, retrain
+or rebuild artifacts in this order:
+
+```powershell
 jupyter notebook
+python scripts\build_artifacts.py
+pytest
+streamlit run app\streamlit_app.py
 ```
 
-Run `01_eda.ipynb` → `02_preprocessing.ipynb` → `03_clustering.ipynb` →
-`04_modeling.ipynb` → `05_results_comparison.ipynb`.
+If `notebooks\mlflow.db` cannot be deleted, close any running Jupyter, MLflow,
+or Python process first, then run:
 
-This produces:
-- `data/processed/churn_processed.csv`, `churn_segmented.csv`
-- `models/saved_models/best_model_<NAME>.pkl`
-- `outputs/metrics/*.csv`, `outputs/figures/*.png`
-
-### 4. Build serving artifacts (for the API/demo)
-
-```bash
-python scripts/build_artifacts.py
+```powershell
+Remove-Item -LiteralPath "notebooks\mlflow.db" -Force
 ```
 
-This fits and saves `models/saved_models/preprocessor.pkl`, used by both the API and
-Streamlit app to transform raw inputs exactly the way training data was transformed.
+## License
 
-### 5. Run the Streamlit demo
-
-```bash
-streamlit run app/streamlit_app.py
-```
-
-Includes a single-customer prediction form, batch CSV upload, and a project summary tab.
-
----
-
-## 🛠️ Tech Stack
-
-- **Data/ML:** Python, pandas, NumPy, scikit-learn, imbalanced-learn (SMOTE), yellowbrick
-- **Demo:** Streamlit
-- **Visualization:** Matplotlib, Seaborn
-
----
-
-## 🔮 Future Work
-
-- Connect to a live database instead of a static Kaggle CSV
-- Feature importance / SHAP-based explainability for individual predictions
-- Hyperparameter tuning (GridSearchCV / Optuna) for further accuracy gains
-- Containerize the Streamlit app for easier deployment
-- CI/CD pipeline (GitHub Actions) for automated testing of `src/preprocessing.py`
-
----
-
-## 📄 License
-
-This project is for educational/portfolio purposes. The underlying dataset is from
-Kaggle and subject to its own license terms. The reference paper is licensed under
-CC BY-NC 4.0.
+This project is for educational and portfolio use. The Kaggle dataset is subject
+to its own license terms. The reference paper is licensed under CC BY-NC 4.0.

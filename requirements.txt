@@ -9,6 +9,7 @@ scikit-learn
 imbalanced-learn
 yellowbrick
 joblib
+mlflow
 
 # --- Notebook tooling ---
 jupyter

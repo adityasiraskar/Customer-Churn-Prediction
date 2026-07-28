@@ -14,6 +14,8 @@ new customers exactly the same way the model was trained.
 from __future__ import annotations
 
 import os
+from collections.abc import Sequence
+
 import joblib
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
@@ -72,12 +74,12 @@ class ChurnPreprocessor:
     into the exact feature matrix the model expects.
     """
 
-    def __init__(self):
+    def __init__(self, feature_columns: Sequence[str] | None = None):
         self.gender_encoder: LabelEncoder | None = None
         self.std_scaler: StandardScaler | None = None
         self.norm_scaler: MinMaxScaler | None = None
         self.onehot_categories: dict[str, list[str]] = {}
-        self.final_feature_columns: list[str] = []
+        self.final_feature_columns: list[str] = list(feature_columns or [])
 
     # ------------------------------------------------------------------
     # Fit (training time only)
@@ -99,9 +101,22 @@ class ChurnPreprocessor:
         self.std_scaler = StandardScaler().fit(df[STANDARDIZE_COLS])
         self.norm_scaler = MinMaxScaler().fit(df[NORMALIZE_COLS])
 
-        # Build the final transformed dataframe once to lock in column order
+        # Build the transformed dataframe once to lock in column order.
+        # When a trained model already saved its input columns, use those as
+        # the serving contract so inference matches the model exactly.
         transformed = self._transform_core(df, is_training=True)
-        self.final_feature_columns = [c for c in transformed.columns if c != TARGET_COL]
+        if self.final_feature_columns:
+            missing_cols = [
+                c for c in self.final_feature_columns
+                if c not in transformed.columns and c != TARGET_COL
+            ]
+            if missing_cols:
+                raise ValueError(
+                    "Feature columns are not produced by the preprocessor: "
+                    + ", ".join(missing_cols)
+                )
+        else:
+            self.final_feature_columns = [c for c in transformed.columns if c != TARGET_COL]
 
         return self
 
